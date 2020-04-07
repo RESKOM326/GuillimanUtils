@@ -1,6 +1,8 @@
 package io.github.RESKOM326.guillimanutils;
 
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,6 +11,7 @@ import org.bukkit.entity.Player;
 
 public class GuillimanUtilsCommandExecutor implements CommandExecutor {
 	private final GuillimanUtils plugin;
+	private ArrayList<String> godHood;
 	
 	public GuillimanUtilsCommandExecutor(GuillimanUtils plugin) {
 		this.plugin = plugin;
@@ -42,7 +45,7 @@ public class GuillimanUtilsCommandExecutor implements CommandExecutor {
 				}
 				Player p = (Player) sender;
 				if(args.length == 0) {		// Hides the caster from every player
-					for(Player targets : Bukkit.getOnlinePlayers()) {
+					for(Player targets : Bukkit.getServer().getOnlinePlayers()) {
 						if(!targets.canSee(p)) {
 							continue;
 						}
@@ -78,7 +81,7 @@ public class GuillimanUtilsCommandExecutor implements CommandExecutor {
 				}
 				Player p = (Player) sender;
 				if(args.length == 0) {		// Unhides the caster from every player
-					for(Player targets : Bukkit.getOnlinePlayers()) {
+					for(Player targets : Bukkit.getServer().getOnlinePlayers()) {
 						if(targets.canSee(p)) {
 							continue;
 						}
@@ -102,6 +105,29 @@ public class GuillimanUtilsCommandExecutor implements CommandExecutor {
 				}
 			} catch(IllegalArgumentException e) {
 				System.err.print("Bad username");
+			}
+		}
+		else if(command.getName().equalsIgnoreCase("ascend")) {
+			// Usage: /ascend [playerList]
+			try {
+				if(args.length == 0) {
+					return false;
+				}
+				else {
+					for(int i = 0; i < args.length; i++) {
+						Player target = Bukkit.getServer().getPlayer(args[i]);
+						if(target == null) {
+							sender.sendMessage("Player " + args[i] + " is offline or does not exist");
+							continue;
+						}
+						if(!godHood.contains(target.getName())) {
+							godHood.add(target.getName());
+						}
+					}
+					return true;
+				}
+			} catch(Exception e) {
+				System.err.println(e.getMessage());
 			}
 		}
 		return false;
